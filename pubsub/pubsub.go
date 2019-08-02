@@ -33,11 +33,11 @@ func (c *libp2pPubSub) Broadcast(msg string) {
 }
 
 // Receive gets message from PubSub in a blocking way
-func (c *libp2pPubSub) Receive() (string,string) {
+func (c *libp2pPubSub) Receive() (string, string) {
 	// Blocking function for consuming newly received messages
 	// We can access message here
 	msg, _ := c.subscription.Next(context.Background())
-	return string(msg.From),string(msg.Data)
+	return string(msg.From), string(msg.Data)
 }
 
 // createPeer creates a peer on localhost and configures it to use libp2p.

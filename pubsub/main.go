@@ -9,15 +9,14 @@ import (
 )
 
 // setupHosts is responsible for creating libp2p hosts.
-func setupHosts(n int, initialPort int) ([]*libp2pPubSub,[]*core.Host) {
+func setupHosts(n int, initialPort int) ([]*libp2pPubSub, []*core.Host) {
 	// hosts used in libp2p communications
 	hosts := make([]*core.Host, n)
-	pubSubs := make([]*libp2pPubSub,n)
+	pubSubs := make([]*libp2pPubSub, n)
 
 	for i := range hosts {
 
 		pubsub := new(libp2pPubSub)
-
 
 		// creating libp2p hosts
 		host := pubsub.createPeer(i, initialPort+i)
@@ -26,7 +25,7 @@ func setupHosts(n int, initialPort int) ([]*libp2pPubSub,[]*core.Host) {
 		pubsub.initializePubSub(*host)
 		pubSubs[i] = pubsub
 	}
-	return pubSubs,hosts
+	return pubSubs, hosts
 }
 
 // setupNetworkTopology sets up a simple network topology for test.
@@ -49,19 +48,19 @@ func setupNetworkTopology(hosts []*core.Host) {
 
 }
 
-func startListening(pubSubs []*libp2pPubSub,hosts []*core.Host) {
+func startListening(pubSubs []*libp2pPubSub, hosts []*core.Host) {
 	wg := &sync.WaitGroup{}
 
 	for i, host := range hosts {
 
 		wg.Add(1)
-		go func (host *core.Host,pubSub *libp2pPubSub){
+		go func(host *core.Host, pubSub *libp2pPubSub) {
 
-			_,msg := pubSub.Receive()
+			_, msg := pubSub.Receive()
 
-			fmt.Printf("Node %s received Message: '%s'\n",  (*host).ID().Pretty(),msg)
+			fmt.Printf("Node %s received Message: '%s'\n", (*host).ID().Pretty(), msg)
 
-		}(host,pubSubs[i])
+		}(host, pubSubs[i])
 	}
 	fmt.Println("Broadcasting a message on node 0...")
 	pubSubs[0].Broadcast("Testing PubSub")
@@ -75,7 +74,7 @@ func main() {
 	initialPort := 9900
 
 	// Create hosts in libp2p
-	pubSubs,hosts := setupHosts(n, initialPort)
+	pubSubs, hosts := setupHosts(n, initialPort)
 
 	defer func() {
 		fmt.Println("Closing hosts")
@@ -86,7 +85,6 @@ func main() {
 
 	setupNetworkTopology(hosts)
 
-	startListening(pubSubs,hosts)
-
+	startListening(pubSubs, hosts)
 
 }
